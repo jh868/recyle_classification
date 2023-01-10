@@ -2,6 +2,8 @@ import os
 import glob
 from sklearn.model_selection import train_test_split
 import shutil
+from padding import padding
+import cv2
 
 path = './data/'
 dataset_path = './dataset/'
@@ -19,9 +21,18 @@ for image_folder in image_folder_list:
     os.makedirs(dataset_path + 'val/' + image_folder, exist_ok=True)
     os.makedirs(dataset_path + 'test/' + image_folder, exist_ok=True)
 
-    for idx, image in enumerate(train):
-        shutil.move(image, dataset_path + 'train/' + image_folder + '/' + f'{image_folder + str(idx)}.png')
-    for idx, image in enumerate(val):
-        shutil.move(image, dataset_path + 'val/' + image_folder + '/' + f'{image_folder + str(idx)}.png')
-    for idx, image in enumerate(test):
-        shutil.move(image, dataset_path + 'test/' + image_folder + '/' + f'{image_folder + str(idx)}.png')
+    for idx, image_path in enumerate(train):
+        image = cv2.imread(image_path)
+        cv2.imwrite(dataset_path + 'train/' + image_folder + '/' + f'{image_folder + str(idx)}.png',
+                    padding(image, 224))
+        # shutil.move(image, dataset_path + 'train/' + image_folder + '/' + f'{image_folder + str(idx)}.png')
+    for idx, image_path in enumerate(val):
+        image = cv2.imread(image_path)
+        cv2.imwrite(dataset_path + 'val/' + image_folder + '/' + f'{image_folder + str(idx)}.png',
+                    padding(image, 224))
+        # shutil.move(image, dataset_path + 'val/' + image_folder + '/' + f'{image_folder + str(idx)}.png')
+    for idx, image_path in enumerate(test):
+        image = cv2.imread(image_path)
+        cv2.imwrite(dataset_path + 'test/' + image_folder + '/' + f'{image_folder + str(idx)}.png',
+                    padding(image, 224))
+        # shutil.move(image, dataset_path + 'test/' + image_folder + '/' + f'{image_folder + str(idx)}.png')

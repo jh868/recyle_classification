@@ -21,16 +21,16 @@ def padding(img, set_size):
         img = cv2.resize(img, (new_width, new_height), cv2.INTER_AREA)
 
     try:
-        h,w,c = img.shape
+        h, w, c = img.shape
     except:
         print('파일을 다시 확인')
         raise
 
     delta_w = set_size - w
     delta_h = set_size - h
-    top, bottom = delta_h//2, delta_h-(delta_h//2)
-    left, right = delta_w//2, delta_w-(delta_w//2)
+    top, bottom = delta_h // 2, delta_h - (delta_h // 2)
+    left, right = delta_w // 2, delta_w - (delta_w // 2)
 
-    new_img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=[0,0,0])
+    new_img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=[0, 0, 0])
 
     return new_img
