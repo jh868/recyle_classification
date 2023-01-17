@@ -1,2 +1,0 @@
-generator.pth filter=lfs diff=lfs merge=lfs -text
-ResNet_best.pt filter=lfs diff=lfs merge=lfs -text
