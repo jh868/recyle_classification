@@ -25,13 +25,12 @@ class customData(Dataset):
 
         if self.transform is not None:
             image = self.transform(image=image)['image']
-
         return image, label
 
     def __len__(self):
         return len(self.all_image_path)
 
-# if __name__ == '__main__':
-#     test = customData('./dataset/train/', transform=None)
-#     for i in test:
-#         pass
+if __name__ == '__main__':
+    test = customData('../dataset/train/', transform=None)
+    for i in test:
+        pass

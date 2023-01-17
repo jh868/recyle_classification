@@ -2,10 +2,9 @@ import albumentations as A
 from albumentations.pytorch.transforms import ToTensorV2
 import torch
 import torch.nn as nn
-import torchvision
 from torchvision import models
 from torch.utils.data import DataLoader
-from customdata import customData
+from temp.customdata import customData
 from timm.loss import LabelSmoothingCrossEntropy
 from tqdm import tqdm
 
@@ -13,6 +12,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # transform
 train_transform = A.Compose([
+    A.Resize(224, 224),
     A.HorizontalFlip(),
     A.VerticalFlip(),
     A.RandomFog(),
@@ -24,14 +24,15 @@ train_transform = A.Compose([
     ToTensorV2()
 ])
 val_transform = A.Compose([
+    A.Resize(224, 224),
     A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ToTensorV2()
 ])
 
 # dataset
-train_dataset = customData('./dataset/train/', train_transform)
-val_dataset = customData('./dataset/val/', val_transform)
-test_dataset = customData('./dataset/test', val_transform)
+train_dataset = customData('../dataset/train/', train_transform)
+val_dataset = customData('../dataset/val/', val_transform)
+test_dataset = customData('../dataset/test', val_transform)
 
 # data loader
 train_loader = DataLoader(train_dataset, batch_size=120, shuffle=True)
@@ -41,13 +42,13 @@ test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 # model call
 model = models.resnet18(pretrained=True)
 # print(model) (fc): Linear(in_features=512, out_features=1000, bias=True)
-model.fc = nn.Linear(in_features=512, out_features=12)  # out_features 수정
+model.fc = nn.Linear(in_features=512, out_features=13)  # out_features 수정
 
 model.to(device)
 
 # HyParameter
 criterion = LabelSmoothingCrossEntropy()
-optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
+optimizer = torch.optim.AdamW(model.parameters(), lr=0.01)
 
 
 # train
@@ -77,7 +78,7 @@ def train(num_epoch, model, train_loader, val_loader, criterion, optimizer, devi
 
         if avrg_loss < best_loss:
             best_loss = avrg_loss
-            torch.save(model.state_dict(), './best.pt')
+            torch.save(model.state_dict(), '../best.pt')
 
     torch.save(model.state_dict(), './last.pt')
 
@@ -137,5 +138,5 @@ if __name__ == '__main__':
     train(num_epoch=10, model=model, train_loader=train_loader, val_loader=val_loader, criterion=criterion,
           optimizer=optimizer, device=device)
 
-    model.load_state_dict(torch.load('./best.pt', map_location=device))
+    model.load_state_dict(torch.load('../best.pt', map_location=device))
     test(model, test_loader, device)
